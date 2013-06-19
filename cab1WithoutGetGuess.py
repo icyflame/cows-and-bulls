@@ -89,11 +89,11 @@ class CowsAndBulls:
 
         counter = 1
 
-        Label(f,text='Guess').grid(row=counter,column=1)
+        Label(f,text='Guess',width=15).grid(row=counter,column=1)
 
-        Label(f,text='Numbers in the correct place').grid(row=counter,column=2)
+        Label(f,text='BULLS',width=15).grid(row=counter,column=2)
 
-        Label(f,text='Numbers in the wrong place').grid(row=counter,column=3)
+        Label(f,text='COWS',width=15).grid(row=counter,column=3)
 
         counter += 1
 
@@ -197,9 +197,17 @@ class CowsAndBulls:
 
             counter += 1
 
-        Entry(f,textvariable=a,width=3).grid(row=0,column=0)
+        a = Entry(f,textvariable=a,width=3)
+
+        a.grid(row=0,column=0)
+
+        a.focus()        
+        
+        f.bind('<Return>',validate)
 
         Button(f,text='submit',command=validate).grid(row=0,column=1)
+
+        Button(f,text='Main Menu',command=self.initFrameAndButtons).grid(row=0,column=2)
 
     def gameOver(self):
 
