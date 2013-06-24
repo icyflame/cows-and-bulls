@@ -18,7 +18,28 @@ class CowsAndBulls:
 
         self.initFrameAndButtons()
 
-        self.makeFullScreen()
+        self.initMenu()
+
+        #self.makeFullScreen()
+
+    def initMenu(self):
+
+        menubar = Menu(self.window)
+
+        filemenu = Menu(menubar,tearoff = 0)
+
+        filemenu.add_command(label='Start a new game',command=self.startNewGame,accelerator='N')
+        filemenu.add_command(label='Quit',command=self.quitwin,accelerator='Escape')
+        
+        helpmenu = Menu(menubar,tearoff=0)
+
+        helpmenu.add_command(label='Help',command=self.showHelp)
+        helpmenu.add_command(label='About',command=self.showCredits)
+
+        menubar.add_cascade(label='File',menu=filemenu)
+        menubar.add_cascade(label='Help',menu=helpmenu)
+
+        self.window.config(menu=menubar)
 
     def makeFullScreen(self):
 
@@ -67,11 +88,15 @@ class CowsAndBulls:
 
         comp = ''
 
-        for i in range(3):
+        comp += str(random.choice(range(1,10,1)))
 
-            comp += str(random.choice(range(1,10,1)))
+        for i in range(2):
+
+            comp += str(random.choice(range(10)))
 
         comp = int(comp)
+
+        comp = 277
 
         #print comp
 
@@ -99,7 +124,7 @@ class CowsAndBulls:
 
         a= StringVar()           
 
-        def validate():
+        def validate(ev=None):
 
             '''function will check if or not the given three digit string
                 which is now inside the string var 'a' and will be obtained
@@ -144,6 +169,8 @@ class CowsAndBulls:
 
             else:
 
+                a.set('')
+
                 return
 
 
@@ -161,26 +188,36 @@ class CowsAndBulls:
 
             compNum = [int(i) for i in str(comp)]
 
-            correctPlace = 0
+            bulls = 0
 
-            wrongPlace = 0
+            cows = 0
 
             Comp = compNum[:]
             User = numbers[:]
 
-            for x in Comp:
+            print 'considering:',User
 
-                if x in User:
+            print 'against',Comp
+
+            
+            for x in User:
+
+                if x in Comp:
 
                     if Comp.index(x) == User.index(x):
 
-                        correctPlace += 1
+                        bulls += 1
+
+                        print x,' in correct place'
 
                     else:
 
-                        wrongPlace += 1
+                        print x,' in wrong place'
 
-            if correctPlace == 3:
+                        cows += 1
+
+
+            if  str(a.get()) == str(comp):
 
                 GameOver = True
                 self.gameOver()
@@ -191,19 +228,21 @@ class CowsAndBulls:
 
             Label(f,text=str(a.get())).grid(row=counter,column=1)
 
-            Label(f,text=str(correctPlace)).grid(row=counter,column=2)
+            Label(f,text=str(bulls)).grid(row=counter,column=2)
 
-            Label(f,text=str(wrongPlace)).grid(row=counter,column=3)
+            Label(f,text=str(cows)).grid(row=counter,column=3)
 
             counter += 1
 
-        a = Entry(f,textvariable=a,width=3)
+            a.set('')
 
-        a.grid(row=0,column=0)
+        d = Entry(f,textvariable=a,width=3)
 
-        a.focus()        
+        d.grid(row=0,column=0)
+
+        d.focus()        
         
-        f.bind('<Return>',validate)
+        self.window.bind('<Return>',validate)
 
         Button(f,text='submit',command=validate).grid(row=0,column=1)
 
@@ -214,9 +253,21 @@ class CowsAndBulls:
         alert('Game over','Congrats! you win!')
 
         self.initFrameAndButtons()
+
+
+    def showHelp(self):
+
+        pass
+
+
+    def showCredits(self):
+
+        pass
             
 
     def quitwin(self):
+
+        self.window.destroy()
 
         self.initFrame()
 
@@ -243,7 +294,7 @@ class CowsAndBulls:
         Label(r,text='Application will quit in 8 seconds.',font=self.big).grid(row=c,column=0)
         c+=1
 
-        self.window.after(8000,self.window.destroy)
+##        self.window.after(8000,self.window.destroy)
 
 CowsAndBulls()
 
