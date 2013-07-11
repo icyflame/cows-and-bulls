@@ -14,7 +14,7 @@ class CowsAndBulls:
 
         self.window = Tk()
 
-        self.window.title('Notes')
+        self.window.title('Cows and Bulls')
 
         self.initFrameAndButtons()
 
@@ -22,7 +22,7 @@ class CowsAndBulls:
 
         self.initBindings()
 
-        #self.makeFullScreen()
+        self.makeFullScreen()
 
 
     def initBindings(self,event=None):
@@ -30,6 +30,7 @@ class CowsAndBulls:
         w = self.window
 
         w.bind('n',self.startNewGame)
+        w.bind('s',self.seePast)
         w.bind('<Escape>',self.quitwin)
 
     def initMenu(self,ev=None):
@@ -39,6 +40,7 @@ class CowsAndBulls:
         filemenu = Menu(menubar,tearoff = 0)
 
         filemenu.add_command(label='Start a new game',command=self.startNewGame,accelerator='N')
+        filemenu.add_command(label='See performance in older games',command=self.seePast,accelerator='S')
         filemenu.add_command(label='Quit',command=self.quitwin,accelerator='Escape')
         
         helpmenu = Menu(menubar,tearoff=0)
@@ -67,7 +69,7 @@ class CowsAndBulls:
 
         except:
 
-            pass
+            pass           
 
         self.frame = Frame(self.window)
 
@@ -82,6 +84,8 @@ class CowsAndBulls:
         self.big  = tkFont.Font(family='helvetica',size=24)
 
         listOfButtons.append(Button(self.frame,text='New game',command=self.startNewGame))
+
+        listOfButtons.append(Button(self.frame,text='See past performance',command=self.seePast))
         
         listOfButtons.append(Button(self.frame,text='QUIT',command=self.quitwin,fg='black',bg='red'))
 
@@ -105,10 +109,6 @@ class CowsAndBulls:
             comp += str(random.choice(range(10)))
 
         comp = int(comp)
-
-        comp = 277
-
-        #print comp
 
         self.initFrame()
 
@@ -208,8 +208,6 @@ class CowsAndBulls:
                 GameOver = True
                 self.gameOver()
 
-            #print correctPlace,wrongPlace
-
             global counter
 
             Label(f,text=str(a.get())).grid(row=counter,column=1)
@@ -221,19 +219,6 @@ class CowsAndBulls:
             counter += 1
 
             a.set('')
-
-
-##            Comp = compNum[:]
-##            User = numbers[:]
-##
-##            print 'considering:',User
-##
-##            print 'against',Comp
-##
-##
-##            person = User
-##
-##            machine = Comp
 
 
         def digits(number):
@@ -262,81 +247,6 @@ class CowsAndBulls:
 
 
 
-            
-
-##            for i in range(3):
-##
-##                if machine[i] == person[i]:
-##
-##                    bulls += 1'
-
-
-##FIX 2. DOES NOT WORK WHEN THERE ARE REPEATED DIGITS IN THE NUMBER GUESSED BY USER AND BY COMPUTER:
-
-##            LIKE 277 AND 477. THERE IS DOUBLE COUNTING. AND IT SHOWS 2 BULLS AND 2 COWS
-##
-##            for x in range(3):
-##
-##                print 'x:',x
-##
-##                for y in range(3):
-##
-##                        print 'y:',y
-##
-##                        if x == y and machine[x] == person[y]:
-##
-##                            print 'bull'
-##
-##                            bulls += 1
-##
-##                        if not (x == y) and machine[x] == person[y]:
-##
-##                                print machine[x],':',person[y]
-##
-##                                print 'cow'
-##
-##                                cows += 1
-
-
-##FIX 1
-
-
-##            for x in machine:
-##
-##                for y in person:
-##
-##                    if machine.index(x) == person.index(y):
-##
-##                        continue
-##
-##                    else:
-##
-##                        if  x == y:
-##
-##                            cows += 1
-
-
-##CODE THAT DOES NOT WORK WHEN THERE ARE REPEATED DIGITS IN THE NUMBER RANDOMLY SELECTED BY COMPUTER
-
-            
-##            for x in User:
-##
-##                if x in Comp:
-##
-##
-##                    if Comp.index(x) == User.index(x):
-##
-##                        bulls += 1
-##
-##                        print x,' in correct place'
-##
-##                    else:
-##
-##                        print x,' in wrong place'
-##
-##                        cows += 1
-
-
         d = Entry(f,textvariable=a,width=3)
 
         d.grid(row=0,column=0)
@@ -347,23 +257,130 @@ class CowsAndBulls:
 
         Button(f,text='submit',command=validate).grid(row=0,column=1)
 
-        Button(f,text='Main Menu',command=self.initFrameAndButtons).grid(row=0,column=2)
+        Button(f,text='End game',command=self.checkAll).grid(row=0,column=2)
+
+        Button(f,text='Main Menu',command=self.initFrameAndButtons).grid(row=0,column=3)
+
+
+    def checkAll(self):
+
+        import tkMessageBox
+
+
+        if tkMessageBox.askyesno('Are you sure?','If you exit now, then you will forfeit this game automatically. Are you sure you want to exit?'):
+
+            self.win('c')
+
+            self.initFrameAndButtons()
+
+
+        else:
+
+
+            return
+                                                                
 
     def gameOver(self,ev=None):
 
         alert('Game over','Congrats! you win!')
 
+        self.win('u')
+
         self.initFrameAndButtons()
 
 
+    def win(self,param):
+
+        import time
+
+        form = '%B %d, %Y, %H:%M:%S'
+
+        filin = open('past.txt','a')
+
+        filin.write(time.strftime(form) + '|')
+
+        if param == 'c':
+
+            filin.write('Computer')
+
+        if param == 'u':
+
+            filin.write('User')
+
+        filin.write('\n')
+
+        filin.close()
+
+
+    def seePast(self,ev=None):
+
+        a = open('past.txt','r')
+
+        a.seek(0)
+
+        b = Toplevel()
+
+        f = Frame(b)
+
+        f.grid()
+
+        ##f.grid_propagate(0)
+
+        Label(f,text="Date",fg='red',bg='black',width=25).grid(row=0,column=0)
+        Label(f,text="Winner",fg='red',bg='black',width=25).grid(row=0,column=2)
+        
+
+        counter = 1
+
+        if len(a.readlines()) == 0:
+
+            alert('No record found','There is no previous record')
+
+            return
+
+        a.seek(0)
+        
+        for i in a:            
+
+            date, winner = i.split('|')            
+
+            Label(f,text=date).grid(row=counter,column=0)            
+
+            Label(f,text=winner).grid(row=counter,column=2)
+
+            counter += 1
+
+
+        Button(f,command=b.destroy,text="QUIT").grid(row=counter+1, column=1)         
+            
+
     def showHelp(self,ev=None):
 
-        pass
+        alert('Alert','Opening the help page in your default webbrowser. Press the button below.')
+        
+        import webbrowser
+
+        webbrowser.open('help.html')
 
 
     def showCredits(self,ev=None):
 
-        pass
+        r = Toplevel()
+
+        c = 0
+
+        Label(r,text='Created by Siddharth Kannan',font=self.big).grid(row=c,column=0)
+        c+=1
+        Label(r,text='Written on Python 2.7 and Tkinter 8.5',font=self.big).grid(row=c,column=0)
+        c+=1
+        Label(r,text='OS: LINUX MINT 14 NADIA',font=self.big).grid(row=c,column=0)
+        c+=1
+        Label(r,text='This software is licensed under the WTFPL license.',font=self.big).grid(row=c,column=0)
+        c+=1
+        Label(r,text='See the copying file for more details.',font=self.big).grid(row=c,column=0)
+        c+=1        
+
+        Button(r,text="QUIT",command=r.destroy).grid(row=c,column=0)
             
 
     def quitwin(self,ev=None):
@@ -395,9 +412,15 @@ class CowsAndBulls:
         Label(r,text='Application will quit in 8 seconds.',font=self.big).grid(row=c,column=0)
         c+=1
 
-##        self.window.after(8000,self.window.destroy)
+        self.window.after(8000,self.window.destroy)
 
-CowsAndBulls()
+def main():
 
-mainloop()       
+    CowsAndBulls()
 
+    mainloop()       
+
+
+if __name__ == '__main__':
+
+    main()

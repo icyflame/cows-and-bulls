@@ -104,8 +104,6 @@ class CowsAndBulls:
 
         self.frame.grid()
 
-        import getGuess
-
         GameOver = False
 
         f = self.frame
